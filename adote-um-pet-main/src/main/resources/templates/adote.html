@@ -1,0 +1,87 @@
+<!-- ******************************************
+*  Created On : Sat Dec 18 2021
+*  Modelo de arquivo HTML para adicionar nova tela de conteúdo dentro do layout estabelecido no arquivo fragmentos/layout.html
+******************************************* -->
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" th:replace="fragments/layout">
+<div th:fragment="conteudo" class="container">
+    <main class="align-middle">
+        <script th:inline="javascript">
+            /*<![CDATA[*/
+            var listaDeAnimais = [[${ listaDeAnimais }]];
+            var contador = 1;
+            var tamanhoDaLista = listaDeAnimais.length
+            console.log(listaDeAnimais)
+
+            /*]]>*/
+        </script>
+        <div class="pl-5 pr-5 d-flex flex-row mt-5 justify-content-center align-items-center">
+            <img src="https://images.vexels.com/media/users/3/136984/isolated/lists/0f7b26b01932f7912bd4351d2286b2af-seta-direita-grossa-1.png"
+                width="100px" height="50px" style="transform:rotate(180deg)" onclick="navegador('retroceder')">
+
+            <div class="caixa mt-3 d-flex flex-column align-items-center">
+                <img class="foto_cachorro mt-2" id="imagemDoAnimal"
+                    src="https://matsudapet.com.br/blog/wp-content/uploads/2019/08/shutterstock_559799125-compressed.jpg"
+                    width="220px" height="180px">
+                <h4 class="mt-2"><span id="nomeDoAnimal">Thor</span></h4>
+                <div class="ml-3 mr-2 mb-2">
+                    <div class="d-flex flex-row p-0 m-0">
+                        <p class="font-weight-bold p-0 m-0 pr-1">Data de nascimento:<span></span></p>
+                        <p id="dataNascimentoAnimal" class="p-0 m-0">4 meses</p>
+                    </div>
+                    <div class="d-flex flex-row p-0 m-0">
+                        <p class="font-weight-bold p-0 m-0 pr-1">Porte:<span></span></p>
+                        <p id="porteAnimal" class="p-0 m-0">Médio <span></span></p>
+                    </div>
+                    <div class="d-flex flex-row p-0 m-0">
+                        <p class="font-weight-bold p-0 m-0 pr-1">Situação:<span></span></p>
+                        <p id="descricaoAnimal" class="p-0 m-0">Saudável, já vacinado e vermifugado <span></span></p>
+                    </div>
+                </div>
+                <div sec:authorize="isAuthenticated()">
+                    <a id="link-adotar">
+                        <input type="button" value="Adotar" class="mt-1 btn btn-info text-dark font-weight-bold">
+                    </a>
+                </div>
+                <div sec:authorize="${#bools.isFalse(isAuthenticated())}">
+                    <a th:href="@{/login}"><input type="button" value="Precisar logar"
+                            class="mt-1 btn btn-info text-dark font-weight-bold"></a>
+                </div>
+            </div>
+
+            <img src="https://images.vexels.com/media/users/3/136984/isolated/lists/0f7b26b01932f7912bd4351d2286b2af-seta-direita-grossa-1.png"
+                width="100px" height="50px" onclick="navegador('avancar')">
+        </div>
+    </main>
+    <script>
+        function formataData(data) {
+            return data.slice(8, 10) + "/" + data.slice(5, 7) + "/" + data.slice(0, 4)
+        }
+
+        function navegador(direcao) {
+            console.log(direcao)
+            if ((contador >= (tamanhoDaLista - 1) && direcao == 'avancar') || (contador <= 0 && direcao == 'retroceder')) {
+                alert('Fim da lista')
+                return
+            }
+            else {
+                direcao == 'avancar' ? contador++ : contador--
+                console.log(contador)
+                console.log(tamanhoDaLista)
+                document.getElementById("nomeDoAnimal").innerHTML = listaDeAnimais[contador].nome;
+                //document.getElementById("imagemDoAnimal").src = 'img/' + listaDeAnimais[contador].imagem;
+                document.getElementById("imagemDoAnimal").src = 'https://drive.google.com/uc?id=' + listaDeAnimais[contador].imagem
+                document.getElementById("dataNascimentoAnimal").innerHTML = formataData(listaDeAnimais[contador].data_nasc)
+                document.getElementById("porteAnimal").innerHTML = listaDeAnimais[contador].porte;
+                document.getElementById("descricaoAnimal").innerHTML = listaDeAnimais[contador].descricao;
+                // redefine o link para o botão 'adotar'
+                document.getElementById("link-adotar").setAttribute("href", "solicita-adocao/" + listaDeAnimais[contador].id);
+            }
+        }
+
+        navegador('inicio')
+    </script>
+
+</div>
+
+</html>
